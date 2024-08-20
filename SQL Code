@@ -1,0 +1,224 @@
+Create database task2;
+use task2;
+CREATE TABLE Members (
+    MemberID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName varchar(50),
+    LastName varchar(50),
+    Street varchar(50),
+    City varchar(50),
+    County varchar(50),
+    PostalCode varchar(50),
+    TelNumber varchar(50),
+    MemberType varchar(50),
+    SubscriptionAmount DECIMAL(10,2), 
+    PaymentMethod varchar(50)
+);
+
+describe Members;
+
+CREATE TABLE Leagues (
+LeagueName VARCHAR(50) PRIMARY KEY,
+ContactName VARCHAR(50),
+TelNumber VARCHAR(15)
+);
+
+describe Leagues;
+
+CREATE TABLE Teams (
+    TeamID INT PRIMARY KEY AUTO_INCREMENT,
+    TeamName VARCHAR(50),
+    Sport VARCHAR(50),
+    LeagueName VARCHAR(50),
+    SeasonStart DATE,
+    SeasonEnd DATE,
+    FOREIGN KEY (LeagueName) REFERENCES Leagues(LeagueName)
+    );
+
+describe Teams;
+
+CREATE TABLE Fixtures (
+    FixtureID INT PRIMARY KEY AUTO_INCREMENT,
+    TeamID INT,
+    OpponentTeamName VARCHAR(50),
+    OpponentTeamContact VARCHAR(100),
+    Location VARCHAR(100),
+    Result VARCHAR(50),
+    Score VARCHAR(10),
+    Date DATE,
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
+    );
+
+describe Fixtures;
+
+CREATE TABLE MemberTeams (
+    TeamID INT,
+    MemberID INT,
+    IsCaptain BOOLEAN,
+    PRIMARY KEY (TeamID, MemberID),
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID),
+    FOREIGN KEY (MemberID) REFERENCES Members(MemberID)
+);
+
+describe MemberTeams;
+
+CREATE TABLE Sports (
+    SportName INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(50)
+);
+
+describe Sports;
+
+CREATE TABLE Opponents (
+    OpponentTeamName VARCHAR(50),
+    OpponentTeamContact VARCHAR(100)
+);
+
+describe Opponents;
+
+-- Insert data into Members table
+INSERT INTO Members (FirstName, LastName, Street, City, County, PostalCode, TelNumber, MemberType, SubscriptionAmount, PaymentMethod) VALUES 
+('Jake', 'Smith', '12 Olivier Lane', 'St Albans', 'Herts', 'AL1 5TH', '07678887675', 'Team', 100.00, 'DD'),
+('Penny', 'O’Reilly', 'The Nest, Crows Lane', 'Harpenden', 'Herts', 'AL3 6TY', '08767545321', 'Team', 100.00, 'DD'),
+('Humerah', 'Kahn', 'Flat 6, Station Road', 'Letchworth', 'Herts', 'SG5 1AG', '07678089098', 'Full', 150.00, 'CC'),
+('Paul', 'Connor', '45 High Street', 'St Albans', 'Herts', 'AL3 4TH', '07675434561', 'Team', 100.00, 'Cash'),
+('Jean-Paul', 'Croix', '21 Roman Road', 'St Albans', 'Herts', 'AL2 7YH', '07876546547', 'Full', 150.00, 'CC'),
+('Seamus', 'O’Malley', 'The Hushlings, Petty Lane', 'Harpenden', 'Herts', 'AL3 4TY', '07789098089', 'Social', 75.00, 'DC'),
+('Katie', 'Fergueson', '13 Manor Crescent', 'St Albans', 'Herts', 'AL4 5YT', '07678089998', 'Social', 75.00, 'DD');
+
+
+select * from Members;
+
+-- Insert data into Leagues table
+INSERT INTO Leagues (LeagueName, ContactName, TelNumber) VALUES 
+('FB1', 'Kelly Holmes', '0774859965'),
+('Community 1', 'Ifzal Khan', '0774858521');
+
+select * from Leagues;
+
+-- Insert data into Teams table
+INSERT INTO Teams (TeamName, Sport, LeagueName, SeasonStart, SeasonEnd) VALUES 
+('Prairie Dogs', 'Football', 'FB1', '2017-09-09', '2018-05-04'),
+('Prairie Shots', 'Golf', 'Community 1', '2017-08-15', '2018-06-06');
+
+select * from Teams;
+
+-- Insert data into Sports
+INSERT INTO Sports (Name) VALUES ('Football'), ('Golf');
+
+Select * from Sports;
+
+-- Insert data into Opponents
+INSERT INTO Opponents (OpponentTeamName,OpponentTeamContact)
+values
+('Lions','0765787656'),
+('Harriers','07678089098'),
+('Colne Ravens', '0765676876'),
+('Furious, Fitness First', '098999987'),
+('Argents', '09998789098');
+
+select * from Opponents;
+
+-- Sports data already entered in Step 4
+
+-- Insert data into Fixtures table
+INSERT INTO Fixtures (TeamID, OpponentTeamName, OpponentTeamContact, Location, Result, Score, Date) VALUES 
+(5, 'Lions', '0765787656', 'Home', 'Win', '2:1', '2017-09-09'),
+(5, 'Harriers', '07678089098', 'Away', 'Lose', '5:1', '2017-09-14'),
+(5, 'Colne Ravens', '0765676876', 'Home', 'Lose', '2:1', '2017-09-21'),
+(5, 'Craven Edge', '0789876566', 'Home', 'Win', '4:3', '2017-09-28'),
+(5, 'Furious, Fitnes First', '098999987', 'Away', 'Draw', '4:4', '2017-10-25'),
+(6, 'Argents', '09998789098', 'Away', 'Win', '2:1', '2017-11-11');
+
+select * from Fixtures;
+
+-- Q no 7
+
+select FirstName,LastName from Members ORDER BY LastName;
+
+-- Q no 8
+
+select * from Fixtures where Location = 'Home' ORDER BY DATE DESC;
+
+-- Q no 9
+
+select COUNT(*) AS Wincount 
+From Fixtures
+Where Result = 'Win' ;
+
+-- Q no 10
+
+SELECT * 
+FROM Fixtures
+WHERE Result = 'Lose'
+ORDER BY Date;
+
+-- Q no 11 
+SELECT FirstName, LastName, MemberType
+FROM Members
+WHERE PaymentMethod = 'DD'
+GROUP BY Firstname,LastName,MemberType;
+
+-- Q no 12
+
+UPDATE Members SET SubscriptionAmount = 120.00 WHERE MemberType ='Team' ;
+
+select * from Members;
+
+
+-- Q no 13
+
+ALTER TABLE Members ADD COLUMN MembershipType VARCHAR(10);
+
+
+-- Casual is additional option in this case
+
+
+INSERT INTO Members (MembershipType) VALUES ('Casual');
+
+select * from Members;
+
+-- Q no 14
+
+UPDATE Members SET MemberType = 'Casual' WHERE FirstName = 'Jake' AND LastName = 'Smith' ;
+
+DELETE FROM Fixtures WHERE OpponentTeamName = 'Colne Ravens' ;
+
+select * from Fixtures;
+
+-- Q 15
+
+SELECT AVG(SubscriptionAmount) AS AvgSubscription FROM Members WHERE MemberType = 'Full';
+
+-- Q 16
+
+SELECT COUNT(*) AS CreditCardCount
+FROM Members
+WHERE PaymentMethod = 'CC';
+
+-- Q 17
+
+SELECT T.TeamName, COUNT(*) AS TotalWins
+FROM Fixtures F
+JOIN Teams T ON F.TeamID = T.TeamID
+WHERE F.Result = 'Win'
+GROUP BY T.TeamName;
+
+-- Q 18
+
+SELECT T.TeamName, MIN(F.Score) AS MinScore, MAX(F.Score) AS MaxScore
+FROM Fixtures F
+JOIN Teams T ON F.TeamID = T.TeamID
+GROUP BY T.TeamName;
+
+-- Q 19
+
+SELECT T.TeamName, COUNT(*) AS TotalFixtures
+FROM Fixtures F
+JOIN Teams T ON F.TeamID = T.TeamID
+GROUP BY T.TeamName;
+
+-- Q 20
+
+SELECT *
+FROM Members
+WHERE SubscriptionAmount > (SELECT AVG(SubscriptionAmount) FROM Members);
